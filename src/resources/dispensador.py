@@ -25,24 +25,24 @@ class Dispensador(Resource):
                         help="Cantidad en gramos"
                         )
     
-    async def get(self, id):
-        sensor = await DispensadorModel.find_by_id(id)
+    def get(self, id):
+        sensor = DispensadorModel.find_by_id(id)
         if sensor:
             return sensor.json()
         return {"message": "Resource not found"}, 404
     
-    async def post(self):
+    def post(self):
         data = Dispensador.parser.parse_args()
         
         device = DispensadorModel(dia=data["dia"], hora=data["hora"], anio=data["año"], cantidad=data["cantidad"])
 
         try:
-            await device.save_to_db()
+            device.save_to_db()
             return device.json(), 201
         except:
             return {"message": "An error ocurred inserting the device"}, 500
 
 
 class DispensadorAll(Resource):
-    async def get(self):
-        return {"Info dispensador": await list(map(lambda x:x.json(), DispensadorModel.query.all()))}
+    def get(self):
+        return {"Info dispensador": list(map(lambda x:x.json(), DispensadorModel.query.all()))}
